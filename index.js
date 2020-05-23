@@ -1,3 +1,4 @@
+require('dotenv').config();
 const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
@@ -6,15 +7,11 @@ const logger = require('morgan');
 const debug = require('debug')('urito-bkd:server');
 const http = require('http');
 
-const dotenv = require('dotenv');
-dotenv.config({
-    path: './bin/enviroment.env'
-});
-
-const indexRouter = require('./routes/index');
+require('./src/configs/connection');
 
 const app = express();
 
+// configure express app
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({
@@ -23,8 +20,13 @@ app.use(express.urlencoded({
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+
+// routing
+const indexRouter = require('./src/routes/index');
 app.use('/', indexRouter);
 
+
+// handler error
 app.use(function (req, res, next) {
     next(createError(404));
 });
